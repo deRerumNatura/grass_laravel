@@ -17,7 +17,7 @@
                             <tr>
                                 <th width="140px">id</th>
                                 <th width="600px">Bunch Title</th>
-                                <th width="400px">Description</th>
+                                <th width="400px">Amount of subscribers</th>
                                 <th width="400px">action</th>
                             </tr>
                             <tr>
@@ -30,10 +30,10 @@
                                 </td>
                             </tr>
                             @foreach ($bunches as $model)
-                                <tr style="cursor: pointer" onclick="document.location = 'bunch/{{$model->id}}';">
+                                <tr class="table-click" style="cursor: pointer" onclick="document.location = 'bunch/{{$model->id}}';">
                                     <td>{{$model->id}}</td>
                                     <td>{{$model->title}}</td>
-                                    <td>{{$model->description}}</td>
+                                    <td>{{count($model->subscribers)}}</td>
                                     <td>
                                         {{Form::open(['class' => 'confirm-delete', 'route' => ['bunch.destroy', $model->id], 'method' => 'DELETE'])}}
                                         {{ link_to_route('bunch.show', 'info', [$model->id], ['class' => 'btn btn-info btn-xs']) }} |

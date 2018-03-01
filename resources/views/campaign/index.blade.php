@@ -31,7 +31,7 @@
                                 </td>
                             </tr>
                         @foreach ($campaigns as $model)
-                                <tr style="cursor: pointer" onclick="document.location = 'campaign/{{$model->id}}'">
+                                <tr class="table-click" style="cursor: pointer" onclick="document.location = 'campaign/{{$model->id}}'">
                                     <td>{{$model->id}}</td>
                                     <td>{{$model->name}}</td>
                                     @if(empty($model->bunch))

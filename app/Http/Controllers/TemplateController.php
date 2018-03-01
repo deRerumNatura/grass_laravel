@@ -41,6 +41,8 @@ class TemplateController extends Controller
      */
     public function store(Template $template, TemplateRequest $request)
     {
+//        $replace = $request->input('content');
+//        dd($replace);
         $template->create($request->all());
 
 //        return view('template.create');

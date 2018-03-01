@@ -30,7 +30,7 @@
                             </tr>
                             @foreach ($templates as $model)
 
-                                <tr style="cursor: pointer" onclick="document.location = 'template/{{$model->id}}';">
+                                <tr class="table-click" style="cursor: pointer" onclick="document.location = 'template/{{$model->id}}';">
                                     <td>{{$model->id}}</td>
                                     <td>{{$model->name}}</td>
                                     <td>

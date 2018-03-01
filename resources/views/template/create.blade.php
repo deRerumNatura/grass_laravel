@@ -9,7 +9,7 @@
     </div>
 
     <div class="alert alert-primary raw" role="alert">
-        <a class="raw-link" href="/public/teest/templatees.html">Нажмите , если вы хотите использовать готовый код шаблона</a>
+        <a class="raw-link" href="/public/teest/templatees.html" target="_blank">Нажмите , если вы хотите использовать готовый код шаблона</a>
     </div>
 
     <div class="panel-body">

@@ -31,7 +31,7 @@
                                 </td>
                             </tr>
                             @foreach ($subscribers as $model)
-                                <tr style="cursor: pointer" onclick="document.location = 'subscriber/{{$model->id}}';">
+                                <tr class="table-click" style="cursor: pointer" onclick="document.location = 'subscriber/{{$model->id}}';">
                                     <td>{{$model->id}}</td>
                                     <td>{{$model->name}}</td>
                                     <td>{{$model->surname}}</td>

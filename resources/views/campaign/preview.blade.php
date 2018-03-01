@@ -16,30 +16,30 @@
                                 <th width="300px">From</th>
                                 <th width="400px">Message</th>
                             </tr>
-{{--                            @foreach ($campaigns as $model)--}}
-{{--                                {{dd($campaigns->)}}--}}
-                                <tr>
-                                    <td>{{$campaigns->name}}</td>
-                                    @if(empty($campaigns->bunch))
-                                        <td style="color: red;">list is deleted. Update list for success.</td>
-                                    @else
-                                    <td>@foreach($campaigns->bunch->subscribers as $subscriber)
-                                            {{--{{todo можно и по короче в методе вьюшки}}--}}
-                                        @if(count($campaigns->bunch->subscribers) > 200)
-                                             break;
+                            {{--                            @foreach ($campaigns as $model)--}}
+                            {{--                                {{dd($campaigns->)}}--}}
+                            <tr>
+                                <td>{{$campaigns->name}}</td>
+                                @if(empty($campaigns->bunch))
+                                    <td style="color: red;">list is deleted. Update list for success.</td>
+                                @else
+                                    <td>@foreach($campaigns->bunch->subscribers as $index => $subscriber)
+                                        @if($index > 199)
+                                                <pre><span style="font-size: 1.2em">...</span></pre>
+                                                @break;
                                             @endif
-                                        {{$subscriber->email}}
-                                    @endforeach</td>
-                                    @endif
-                                    <td>myemail@gmail.com</td>
-                                    <td>{{$campaigns->template->content}}</td>
-                                    <td>
-                                        {{Form::open(['class' => 'confirm-delete', 'route' => ['campaign.destroy', $campaigns->id], 'method' => 'DELETE'])}}
+                                                {{$subscriber->email}}
+                                        @endforeach</td>
+                                @endif
+                                <td>myemail@gmail.com</td>
+                                <td>{{$campaigns->template->content}}</td>
+                                <td>
+                                    {{Form::open(['class' => 'confirm-delete', 'route' => ['campaign.destroy', $campaigns->id], 'method' => 'DELETE'])}}
 
-                                        {{Form::close()}}
-                                    </td>
+                                    {{Form::close()}}
+                                </td>
 
-                                </tr>
+                            </tr>
                             {{--@endforeach--}}
                         </table>
                     </div>

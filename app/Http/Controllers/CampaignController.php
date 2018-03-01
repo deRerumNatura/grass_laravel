@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CampaignRequest;
 use App\Models\Bunch;
 use App\Models\Campaign;
+use App\Models\EmailsSent;
 use App\Models\Template;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -30,6 +32,8 @@ class CampaignController extends Controller
     public function create(Template $template, Bunch $bunch)
     {
         $templates_list = $template->getSelectList();
+//        dd();
+//        dd($template->get());
         $bunches_list = $bunch->getSelectList('title');
 //        dd($bunches_list);
         return view('campaign.create', compact('templates_list', 'bunches_list'));
@@ -38,12 +42,14 @@ class CampaignController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Campaign $campaign, CampaignRequest $request)
     {
-//        dd($request->all());
+//        dump($request->input('template_id'));
+//        dump(Template::all());
+//        die();
         $campaign->create($request->all());
         return redirect()->route('campaign.index')->with('message', 'campaign created');
     }
@@ -51,7 +57,7 @@ class CampaignController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Campaign  $campaign
+     * @param  \App\Campaign $campaign
      * @return \Illuminate\Http\Response
      */
     public function show(Campaign $campaign)
@@ -63,7 +69,7 @@ class CampaignController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Campaign  $campaign
+     * @param  \App\Campaign $campaign
      * @return \Illuminate\Http\Response
      */
     public function edit(Campaign $campaign)
@@ -78,8 +84,8 @@ class CampaignController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Campaign  $campaign
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Campaign $campaign
      * @return \Illuminate\Http\Response
      */
     public function update(CampaignRequest $request, Campaign $campaign)
@@ -91,7 +97,7 @@ class CampaignController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Campaign  $campaign
+     * @param  \App\Campaign $campaign
      * @return \Illuminate\Http\Response
      */
     public function destroy(Campaign $campaign)
@@ -100,28 +106,55 @@ class CampaignController extends Controller
         return redirect()->route('campaign.index')->with('message', 'successfully deleted');
     }
 
-    public function send(Campaign $campaign) {
+    public function send(Campaign $campaign, EmailsSent $emailsSent)
+    {
+//        dd(Carbon::parse($emailsSent->all()->last()->date)->day <= Carbon::parse($emailsSent->all()->first()->date)->day);
+//        dd($emailsSent->all()[1]);
+//        $dt = Carbon::parse('2012-9-5 23:26:11.123789');
+        if (empty($emailsSent->all()[0])) {
+            $emailsSent->create(['amount' => 1, 'date' => Carbon::today()]);
+        }
+        elseif (empty($emailsSent->all()[1])) {
+            $emailsSent->create(['amount' => $emailsSent->all()->last()->amount + 1, 'date' => Carbon::now()]);
+        }
+        else {
+            $amount = $emailsSent->all()->last()->amount;
+            if ($amount <= 300 && Carbon::parse($emailsSent->all()->last()->date)->day <= Carbon::parse($emailsSent->all()->first()->date)->day) {
+                $amount = $emailsSent->all()->last()->amount + 1;
+                $emailsSent->create(['amount' => $amount, 'date' => Carbon::now()]);
+            }
+            else {
+                return redirect()->route('campaign.index', compact('campaign'))->with('message', 'sending limit is exhausteds');
+            }
+        }
+
 
         $emails = [];
-//        dd($campaign->bunch);
+
         foreach ($campaign->bunch->subscribers as $subscriber) {
             $emails[] = $subscriber->email;
+            $subs_name = $subscriber->name;
+            $subs_surname = $subscriber->surname;
         }
-//        dd($emails);
-        Mail::send([], [], function($message) use ($emails, $campaign)
-        {
+
+        $content = $campaign->template->content;
+        $ready_content = str_replace(['{NAME}', '{SURNAME}'], [$subs_name, $subs_surname], $content);
+
+        Mail::send([], [], function ($message) use ($emails, $ready_content) {
             $message
                 ->from('us@example.com', 'Laravel Test Task')
                 ->to($emails)
-                ->subject('Main')
-                ->setBody($campaign->template->content, 'text/html');
+                ->subject('Finish')
+                ->setBody($ready_content, 'text/html');
         });
+
 
         return redirect()->route('campaign.index', compact('campaign'))->with('message', 'email send');
     }
 
-    public function preview (Campaign $campaign) {
-//        dd($campaign->bunch->subscribers->email);
+    public function preview(Campaign $campaign)
+    {
+
         $campaigns = $campaign->owned()->findOrFail($campaign->id);
         return view('campaign.preview', compact('campaigns'));
     }
