@@ -106,12 +106,13 @@ class CampaignController extends Controller
         return redirect()->route('campaign.index')->with('message', 'successfully deleted');
     }
 
+    public function comparisonDates ($emailsSent) {
+        return Carbon::parse($emailsSent->all()->last()->date)->day <= Carbon::parse($emailsSent->all()->first()->date)->day;
+    }
+
     public function send(Campaign $campaign, EmailsSent $emailsSent)
     {
-//        dd(Carbon::parse($emailsSent->all()->last()->date)->day <= Carbon::parse($emailsSent->all()->first()->date)->day);
-//        dd($emailsSent->all()[1]);
-//        $dt = Carbon::parse('2012-9-5 23:26:11.123789');
-        if (empty($emailsSent->all()[0])) {
+        if (empty($emailsSent->first())) {
             $emailsSent->create(['amount' => 1, 'date' => Carbon::today()]);
         }
         elseif (empty($emailsSent->all()[1])) {
@@ -119,15 +120,15 @@ class CampaignController extends Controller
         }
         else {
             $amount = $emailsSent->all()->last()->amount;
-            if ($amount <= 300 && Carbon::parse($emailsSent->all()->last()->date)->day <= Carbon::parse($emailsSent->all()->first()->date)->day) {
+
+            if ($amount < 300 && $this->comparisonDates($emailsSent)) {
                 $amount = $emailsSent->all()->last()->amount + 1;
-                $emailsSent->create(['amount' => $amount, 'date' => Carbon::now()]);
+                $emailsSent->all()->last()->update(['amount' => $amount, 'date' => Carbon::now()]);
             }
             else {
-                return redirect()->route('campaign.index', compact('campaign'))->with('message', 'sending limit is exhausteds');
+                return redirect()->route('campaign.index')->with('message', 'sending limit is exhausteds');
             }
         }
-
 
         $emails = [];
 
