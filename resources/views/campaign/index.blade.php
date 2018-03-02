@@ -51,6 +51,7 @@
                                         {{Form::button('Delete', ['class' => 'btn btn-danger btn-xs', 'type' => 'submit'])}}
                                         {{ link_to_route('preview', 'preview', [$model->id], ['class' => 'btn btn-success btn-xs']) }}
                                         {{Form::close()}}
+                                        {{ link_to_route('send', 'send', [$model->id], ['class' => 'btn btn-primary btn-xs']) }}
                                     </td>
 
                                 </tr>

@@ -7,7 +7,9 @@
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">campaignS</div>
-
+                    <a class="btn btn-info btn-xs col-md-1 col-sm-2 col-xs-2" href="{{route('campaign.index')}}">
+                        <i class="fa fa-backward" aria-hidden="true"></i> back
+                    </a>
                     <div class="panel-body">
                         <table class="table table-bordered table-responsive table-striped">
                             <tr>
