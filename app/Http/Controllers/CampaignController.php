@@ -126,6 +126,9 @@ class CampaignController extends Controller
                 $emailsSent->all()->last()->update(['amount' => $amount, 'date' => Carbon::now()]);
             }
             else {
+                $emailsSent->where('amount', '<', 301)->delete();
+                $emailsSent->create(['amount' => 1, 'date' => Carbon::today()]);
+                $emailsSent->create(['amount' => 2, 'date' => Carbon::today()->addDay()]);
                 return redirect()->route('campaign.index')->with('message', 'sending limit is exhausteds');
             }
         }
